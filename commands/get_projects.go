@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type Projeto struct {
+type Project struct {
 	Name        string    `json:"name"`
 	Slug        string    `json:"slug"`
 	Description string    `json:"description"`
@@ -16,7 +16,7 @@ type Projeto struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
-func GetProjects(token string) ([]Projeto, error) {
+func GetProjects(token string) ([]Project, error) {
 	// Cria uma requisição GET para a URL da API de projetos
 	req, err := http.NewRequest("GET", "http://localhost:3000/api/project", nil)
 	if err != nil {
@@ -42,12 +42,12 @@ func GetProjects(token string) ([]Projeto, error) {
 	}
 
 	// Decodifica o JSON da resposta para uma slice de Projetos
-	var projetos []Projeto
-	if err := json.NewDecoder(resp.Body).Decode(&projetos); err != nil {
+	var projects []Project
+	if err := json.NewDecoder(resp.Body).Decode(&projects); err != nil {
 		return nil, err
 	}
 
-	fmt.Println(projetos)
+	fmt.Println(projects)
 
-	return projetos, nil
+	return projects, nil
 }
