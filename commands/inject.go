@@ -13,9 +13,19 @@ var InjectCmd = &cobra.Command{
 	Use:   "inject",
 	Short: "Inject environment variables into the current shell",
 	Run: func(cmd *cobra.Command, args []string) {
-		token, _ := cmd.Flags().GetString("token")
+		token, err := utils.LoadToken()
+		if err != nil {
+			fmt.Println("Error loading token:", err)
+			return
+		}
 
-		secrets, err := utils.FetchSecrets(token)
+		projectId, err := utils.LoadSelectedProject()
+		if err != nil {
+			fmt.Println("Error loading selected project:", err)
+			return
+		}
+
+		secrets, err := utils.FetchSecrets(token, projectId)
 		if err != nil {
 			fmt.Println("Error fetching secrets:", err)
 			return
@@ -38,9 +48,4 @@ var InjectCmd = &cobra.Command{
 			fmt.Println("No command provided to run with the injected environment variables")
 		}
 	},
-}
-
-func init() {
-	InjectCmd.Flags().String("token", "", "API token for fetching secrets")
-	InjectCmd.MarkFlagRequired("token")
 }

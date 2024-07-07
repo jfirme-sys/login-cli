@@ -1,30 +1,32 @@
 package utils
 
 import (
-	"os"
-	"path/filepath"
+	"io/ioutil"
 )
 
-func GetConfigDir() string {
-	homeDir, _ := os.UserHomeDir()
-	return filepath.Join(homeDir, ".envsecret-cli")
+const (
+	tokenFile           = "token.txt"
+	selectedProjectFile = "selected_project.txt"
+)
+
+func SaveToken(token string) error {
+	return ioutil.WriteFile(tokenFile, []byte(token), 0644)
 }
 
-func EnsureConfigDir() error {
-	dir := GetConfigDir()
-	return os.MkdirAll(dir, 0755)
+func LoadToken() (string, error) {
+	data, err := ioutil.ReadFile(tokenFile)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
 }
 
 func SaveSelectedProject(projectId string) error {
-	dir := GetConfigDir()
-	filePath := filepath.Join(dir, "selected_project")
-	return os.WriteFile(filePath, []byte(projectId), 0644)
+	return ioutil.WriteFile(selectedProjectFile, []byte(projectId), 0644)
 }
 
 func LoadSelectedProject() (string, error) {
-	dir := GetConfigDir()
-	filePath := filepath.Join(dir, "selected_project")
-	data, err := os.ReadFile(filePath)
+	data, err := ioutil.ReadFile(selectedProjectFile)
 	if err != nil {
 		return "", err
 	}

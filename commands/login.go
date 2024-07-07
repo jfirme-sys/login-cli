@@ -11,8 +11,8 @@ var LoginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Log in to the API",
 	Run: func(cmd *cobra.Command, args []string) {
-		username, _ := cmd.Flags().GetString("username")
-		password, _ := cmd.Flags().GetString("password")
+		username, _ := cmd.Flags().GetString("e")
+		password, _ := cmd.Flags().GetString("p")
 
 		token, err := utils.Login(username, password)
 		if err != nil {
@@ -20,13 +20,19 @@ var LoginCmd = &cobra.Command{
 			return
 		}
 
-		fmt.Println("Login successful, token:", token)
+		err = utils.SaveToken(token)
+		if err != nil {
+			fmt.Println("Failed to save token:", err)
+			return
+		}
+
+		fmt.Println("Login successful, token saved.")
 	},
 }
 
 func init() {
-	LoginCmd.Flags().String("username", "", "Username for login")
-	LoginCmd.Flags().String("password", "", "Password for login")
-	LoginCmd.MarkFlagRequired("username")
-	LoginCmd.MarkFlagRequired("password")
+	LoginCmd.Flags().String("e", "", "Email for login")
+	LoginCmd.Flags().String("p", "", "Password for login")
+	LoginCmd.MarkFlagRequired("e")
+	LoginCmd.MarkFlagRequired("p")
 }

@@ -12,7 +12,7 @@ var SelectProjectCmd = &cobra.Command{
 	Short: "Select a project",
 	Run: func(cmd *cobra.Command, args []string) {
 		projectId, _ := cmd.Flags().GetString("projectId")
-		err := utils.SelectProject(projectId)
+		err := utils.SaveSelectedProject(projectId)
 		if err != nil {
 			fmt.Println("Error selecting project:", err)
 			return
