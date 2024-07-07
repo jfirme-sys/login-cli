@@ -3,6 +3,7 @@ package auth
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -21,8 +22,8 @@ func Authenticate(email, password string) (string, error) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return "", err
+	if resp.StatusCode != http.StatusCreated {
+		return "", fmt.Errorf("authentication failed: status code %d", resp.StatusCode)
 	}
 
 	var res map[string]string
@@ -30,5 +31,10 @@ func Authenticate(email, password string) (string, error) {
 		return "", err
 	}
 
-	return res["token"], nil
+	token, ok := res["token"]
+	if !ok {
+		return "", fmt.Errorf("token not found in response")
+	}
+
+	return token, nil
 }
