@@ -8,21 +8,21 @@ import (
 )
 
 var SelectProjectCmd = &cobra.Command{
-	Use:   "select-project",
+	Use:   "select",
 	Short: "Select a project",
 	Run: func(cmd *cobra.Command, args []string) {
-		projectId, _ := cmd.Flags().GetString("projectId")
-		err := utils.SaveSelectedProject(projectId)
+		id, _ := cmd.Flags().GetString("id")
+		err := utils.SaveSelectedProject(id)
 		if err != nil {
 			fmt.Println("Error selecting project:", err)
 			return
 		}
 
-		fmt.Println("Project selected:", projectId)
+		fmt.Println("Project selected:", id)
 	},
 }
 
 func init() {
-	SelectProjectCmd.Flags().String("projectId", "", "Project ID")
-	SelectProjectCmd.MarkFlagRequired("projectId")
+	SelectProjectCmd.Flags().String("id", "", "Project ID")
+	SelectProjectCmd.MarkFlagRequired("id")
 }

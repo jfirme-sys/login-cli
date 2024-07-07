@@ -8,7 +8,7 @@ import (
 )
 
 var FetchProjectsCmd = &cobra.Command{
-	Use:   "fetch-projects",
+	Use:   "projects",
 	Short: "Fetch available projects",
 	Run: func(cmd *cobra.Command, args []string) {
 		token, err := utils.LoadToken()

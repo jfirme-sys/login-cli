@@ -8,7 +8,7 @@ import (
 )
 
 var FetchSecretsCmd = &cobra.Command{
-	Use:   "fetch-secrets",
+	Use:   "secrets",
 	Short: "Fetch secrets for the selected project",
 	Run: func(cmd *cobra.Command, args []string) {
 		token, err := utils.LoadToken()
