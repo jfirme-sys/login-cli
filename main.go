@@ -4,23 +4,23 @@ import (
 	"envsecret-cli/commands"
 	"fmt"
 	"os"
+
+	"github.com/spf13/cobra"
 )
 
-func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("Expected '--login', '--get-projects' or '--inject-secrets' subcommands")
-		os.Exit(1)
-	}
+var rootCmd = &cobra.Command{
+	Use:   "envsecret",
+	Short: "A CLI tool to inject environment variables",
+}
 
-	switch os.Args[1] {
-	case "--login":
-		commands.Login(os.Args[2], os.Args[3])
-	case "--get-projects":
-		commands.GetProjects(os.Args[2])
-	case "--inject-secrets":
-		commands.InjectSecrets()
-	default:
-		fmt.Println("Expected '--login', '--get-projects' or '--inject-secrets' subcommands")
+func main() {
+	rootCmd.AddCommand(commands.LoginCmd)
+	rootCmd.AddCommand(commands.FetchProjectsCmd)
+	rootCmd.AddCommand(commands.SelectProjectCmd)
+	rootCmd.AddCommand(commands.InjectCmd)
+
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
 }

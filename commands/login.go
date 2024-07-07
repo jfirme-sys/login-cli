@@ -1,23 +1,32 @@
-// Package commands implementa funcionalidades específicas da CLI.
 package commands
 
 import (
-	"envsecret-cli/auth" // Importa o pacote de autenticação
+	"envsecret-cli/utils"
 	"fmt"
+
+	"github.com/spf13/cobra"
 )
 
-// Login realiza a operação de login usando o email e senha fornecidos.
-// Chama a função Authenticate do pacote auth para autenticar o usuário.
-// Imprime o token JWT obtido se o login for bem-sucedido, ou imprime um
-// erro caso contrário.
-func Login(email, password string) {
-	// Chama a função de autenticação do pacote auth para obter o token JWT
-	token, err := auth.Authenticate(email, password)
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
+var LoginCmd = &cobra.Command{
+	Use:   "login",
+	Short: "Log in to the API",
+	Run: func(cmd *cobra.Command, args []string) {
+		username, _ := cmd.Flags().GetString("username")
+		password, _ := cmd.Flags().GetString("password")
 
-	// Imprime o token JWT se a autenticação for bem-sucedida
-	fmt.Println("Token:", token)
+		token, err := utils.Login(username, password)
+		if err != nil {
+			fmt.Println("Login failed:", err)
+			return
+		}
+
+		fmt.Println("Login successful, token:", token)
+	},
+}
+
+func init() {
+	LoginCmd.Flags().String("username", "", "Username for login")
+	LoginCmd.Flags().String("password", "", "Password for login")
+	LoginCmd.MarkFlagRequired("username")
+	LoginCmd.MarkFlagRequired("password")
 }
