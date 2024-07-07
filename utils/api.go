@@ -13,14 +13,18 @@ type Secret struct {
 }
 
 type Project struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Slug        string `json:"slug"`
+	Description string `json:"description"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
 }
 
-func Login(username, password string) (string, error) {
-	loginData := map[string]string{"username": username, "password": password}
+func Login(email, password string) (string, error) {
+	loginData := map[string]string{"email": email, "password": password}
 	body, _ := json.Marshal(loginData)
-	req, err := http.NewRequest("POST", "http://localhost:3000/login", bytes.NewBuffer(body))
+	req, err := http.NewRequest("POST", "http://localhost:3000/api/users/login", bytes.NewBuffer(body))
 	if err != nil {
 		return "", err
 	}
@@ -33,7 +37,7 @@ func Login(username, password string) (string, error) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusCreated {
 		return "", fmt.Errorf("login failed: %s", resp.Status)
 	}
 
@@ -46,7 +50,7 @@ func Login(username, password string) (string, error) {
 }
 
 func FetchProjects(token string) ([]Project, error) {
-	req, err := http.NewRequest("GET", "https://api.example.com/projects", nil)
+	req, err := http.NewRequest("GET", "http://localhost:3000/api/project", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -71,15 +75,8 @@ func FetchProjects(token string) ([]Project, error) {
 	return projects, nil
 }
 
-func SelectProject(projectId string) error {
-	// You can store this selection in a config file or environment variable
-	// For simplicity, we print it here
-	fmt.Println("Project selected:", projectId)
-	return nil
-}
-
-func FetchSecrets(token string) (map[string]string, error) {
-	req, err := http.NewRequest("GET", "https://api.example.com/secrets", nil)
+func FetchSecrets(token, projectId string) (map[string]string, error) {
+	req, err := http.NewRequest("GET", fmt.Sprintf("http://localhost:3000/api/secret/%s", projectId), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -96,15 +93,10 @@ func FetchSecrets(token string) (map[string]string, error) {
 		return nil, fmt.Errorf("failed to fetch secrets: %s", resp.Status)
 	}
 
-	var secrets []Secret
+	var secrets map[string]string
 	if err := json.NewDecoder(resp.Body).Decode(&secrets); err != nil {
 		return nil, err
 	}
 
-	secretMap := make(map[string]string)
-	for _, secret := range secrets {
-		secretMap[secret.Key] = secret.Value
-	}
-
-	return secretMap, nil
+	return secrets, nil
 }
